@@ -5,10 +5,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.deepdiver.game.GameSettings;
 
 /**
- * Кристалл — основной источник очков.
- *
- * Золотые кристаллы появляются реже (8% шанс) и дают больше очков (300 против 100).
- * Шанс намеренно занижен, чтобы золотые были ценными.
+ * Объект кристалла.
+ * Может быть обычным (синим) или золотым.
+ * Обычный даёт 100 очков, золотой - 300 очков.
  */
 public class CrystalObject {
     public float x, y;
@@ -17,20 +16,29 @@ public class CrystalObject {
     public Rectangle bounds;
     public boolean isGold;
 
+    /**
+     * Конструктор. Создаёт кристалл в случайной позиции справа от экрана.
+     * Золотые кристаллы появляются с вероятностью 8%.
+     */
     public CrystalObject() {
         this.x = GameSettings.SCREEN_WIDTH + 50;
         this.y = MathUtils.random(60f, GameSettings.SCREEN_HEIGHT - 100f);
         this.bounds = new Rectangle(x, y, width, height);
-
-        // 8% шанс выпадения золотого кристалла (было 15%, но решили сделать реже)
         this.isGold = MathUtils.random() < 0.08f;
     }
 
+    /**
+     * Обновляет позицию границ объекта.
+     * @param delta время между кадрами
+     */
     public void update(float delta) {
-        x -= GameSettings.MOVE_SPEED * delta;
         bounds.setPosition(x, y);
     }
 
+    /**
+     * Проверяет, вышел ли кристалл за левый край экрана.
+     * @return true если объект полностью невидим
+     */
     public boolean isOutOfFrame() {
         return x + width < 0;
     }

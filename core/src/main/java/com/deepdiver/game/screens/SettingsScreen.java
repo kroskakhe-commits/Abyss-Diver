@@ -15,18 +15,14 @@ import com.deepdiver.game.components.TextView;
 import com.deepdiver.game.managers.MemoryManager;
 
 /**
- * ЭКРАН НАСТРОЕК.
- *
- * Здесь можно включить/выключить музыку и звуковые эффекты.
- * Настройки сохраняются в памяти телефона и применяются сразу.
- *
- * Визуал: движущийся фон, полупрозрачная панель по центру,
- * две строки настроек и кнопка "Назад".
+ * Экран настроек.
+ * Позволяет включать/выключать музыку и звуковые эффекты.
+ * Настройки сохраняются в памяти и применяются мгновенно.
  */
 public class SettingsScreen extends ScreenAdapter {
 
     Main main;
-    MovingBackgroundView backgroundView;   // Анимированный фон
+    MovingBackgroundView backgroundView;
     TextView titleTextView;
     TextView musicSettingView;
     TextView soundSettingView;
@@ -36,7 +32,7 @@ public class SettingsScreen extends ScreenAdapter {
     private Rectangle soundBtnBounds;
     private Vector3 touchPoint;
 
-    private ShapeRenderer shapeRenderer;   // Для рисования панели и рамок
+    private ShapeRenderer shapeRenderer;
 
     public SettingsScreen(Main main) {
         this.main = main;
@@ -45,42 +41,31 @@ public class SettingsScreen extends ScreenAdapter {
 
         backgroundView = new MovingBackgroundView(GameResources.backgroundMenu);
 
-        // ============================================================
-        // 🎯 НАСТРОЙКИ РАСПОЛОЖЕНИЯ — МЕНЯЙ ЗДЕСЬ!
-        // ============================================================
+        // Размеры и позиции элементов
+        float panelWidth = GameSettings.size(500);
+        float panelHeight = GameSettings.size(280);
+        float panelOffsetY = GameSettings.y(0);
 
-        // ----- ПАРАМЕТРЫ ТЁМНОЙ ПОДЛОЖКИ -----
-        float panelWidth = GameSettings.size(500);   // Ширина панели
-        float panelHeight = GameSettings.size(280);  // Высота панели
-        float panelOffsetY = GameSettings.y(0);      // Смещение панели (+ = выше, - = ниже)
+        float backSize = GameSettings.size(60);
+        float backOffsetX = GameSettings.x(30);
+        float backOffsetY = GameSettings.y(30);
 
-        // ----- КНОПКА НАЗАД -----
-        float backSize = GameSettings.size(60);      // Размер кнопки назад
-        float backOffsetX = GameSettings.x(30);      // Отступ от левого края
-        float backOffsetY = GameSettings.y(30);      // Отступ от верхнего края
+        float titleOffsetY = GameSettings.y(-20);
 
-        // ----- ЗАГОЛОВОК -----
-        float titleOffsetY = GameSettings.y(-20);    // Смещение заголовка
+        float itemWidth = GameSettings.size(400);
+        float itemHeight = GameSettings.size(60);
+        float itemOffsetX = GameSettings.x(60);
+        float lineSpacing = GameSettings.size(90);
+        float textDownOffset = GameSettings.size(40);
 
-        // ----- СТРОКИ НАСТРОЕК -----
-        float itemWidth = GameSettings.size(400);    // Ширина зоны нажатия
-        float itemHeight = GameSettings.size(60);    // Высота зоны нажатия
-        float itemOffsetX = GameSettings.x(60);      // Сдвиг текста вправо (чтобы не прилипал к левому краю)
-        float lineSpacing = GameSettings.size(90);   // Расстояние между строками
-        float textDownOffset = GameSettings.size(40); // Насколько опустить строки вниз
-
-        // ============================================================
-        // РАСЧЁТ КООРДИНАТ (НЕ ТРОГАТЬ, ЕСЛИ НЕ УВЕРЕН)
-        // ============================================================
-
+        // Расчёт координат
         float centerX = GameSettings.SCREEN_WIDTH / 2;
         float centerY = GameSettings.SCREEN_HEIGHT / 2;
 
-        // ТЁМНАЯ ПОДЛОЖКА
         float panelX = centerX - panelWidth / 2;
         float panelY = centerY - panelHeight / 2 + panelOffsetY;
 
-        // КНОПКА НАЗАД
+        // Кнопка "НАЗАД"
         backBtnBounds = new Rectangle(
             backOffsetX,
             GameSettings.SCREEN_HEIGHT - backSize - backOffsetY,
@@ -88,20 +73,20 @@ public class SettingsScreen extends ScreenAdapter {
             backSize
         );
 
-        // ЗАГОЛОВОК "НАСТРОЙКИ"
+        // Заголовок
         titleTextView = new TextView(main.textView.getFont(),
             centerX - GameSettings.size(200),
             panelY + panelHeight + GameSettings.size(40) + titleOffsetY,
             "НАСТРОЙКИ");
 
-        // ЗОНЫ НАЖАТИЯ ДЛЯ СТРОК НАСТРОЕК
+        // Зоны нажатия для строк настроек
         float itemX = panelX + (panelWidth - itemWidth) / 2;
         float firstItemY = panelY + panelHeight - GameSettings.size(80) - textDownOffset;
 
         musicBtnBounds = new Rectangle(itemX, firstItemY, itemWidth, itemHeight);
         soundBtnBounds = new Rectangle(itemX, firstItemY - lineSpacing, itemWidth, itemHeight);
 
-        // ТЕКСТЫ НАСТРОЕК (считываем текущие значения из памяти)
+        // Тексты настроек
         musicSettingView = new TextView(main.textView.getFont(),
             itemX + itemOffsetX,
             firstItemY + GameSettings.size(40),
@@ -122,12 +107,12 @@ public class SettingsScreen extends ScreenAdapter {
         shapeRenderer.setProjectionMatrix(main.camera.combined);
         ScreenUtils.clear(Color.CLEAR);
 
-        // ========== РИСУЕМ ДВИЖУЩИЙСЯ ФОН ==========
+        // Движущийся фон
+        backgroundView.update(delta);
         main.batch.begin();
         backgroundView.draw(main.batch);
         main.batch.end();
 
-        // ========== ТЁМНО-СЕРАЯ ПОЛУПРОЗРАЧНАЯ ПОДЛОЖКА ==========
         float centerX = GameSettings.SCREEN_WIDTH / 2;
         float centerY = GameSettings.SCREEN_HEIGHT / 2;
 
@@ -136,32 +121,32 @@ public class SettingsScreen extends ScreenAdapter {
         float panelX = centerX - panelWidth / 2;
         float panelY = centerY - panelHeight / 2;
 
-        // Заливка фона панели
+        // Полупрозрачная панель
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(new Color(0.2f, 0.2f, 0.25f, 0.85f));
         shapeRenderer.rect(panelX, panelY, panelWidth, panelHeight);
 
-        // Светлая обводка для красоты
+        // Обводка панели
         shapeRenderer.setColor(new Color(0.5f, 0.5f, 0.6f, 0.9f));
         shapeRenderer.rect(panelX, panelY, panelWidth, panelHeight);
+
         shapeRenderer.end();
 
-        // Рамка вокруг панели
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(new Color(0.6f, 0.6f, 0.7f, 1f));
         shapeRenderer.rect(panelX + 5, panelY + 5, panelWidth - 10, panelHeight - 10);
         shapeRenderer.end();
 
-        // ========== РИСУЕМ ТЕКСТ И КНОПКИ ==========
+        // Отрисовка текста
         main.batch.begin();
 
-        // ЗАГОЛОВОК (золотым цветом)
+        // Заголовок
         main.textView.setScale(GameSettings.size(1.8f));
         main.textView.draw(main.batch, titleTextView.text,
             titleTextView.x, titleTextView.y,
             Color.GOLD);
 
-        // СТРОКИ НАСТРОЕК (белым цветом)
+        // Настройки
         main.textView.setScale(GameSettings.size(1.3f));
         main.textView.draw(main.batch, musicSettingView.text,
             musicSettingView.x, musicSettingView.y,
@@ -170,7 +155,7 @@ public class SettingsScreen extends ScreenAdapter {
             soundSettingView.x, soundSettingView.y,
             Color.WHITE);
 
-        // КНОПКА НАЗАД (иконка или текст)
+        // Кнопка "НАЗАД"
         if (GameResources.buttonBackMarine != null) {
             main.batch.draw(GameResources.buttonBackMarine,
                 backBtnBounds.x, backBtnBounds.y,
@@ -187,17 +172,14 @@ public class SettingsScreen extends ScreenAdapter {
     }
 
     /**
-     * Обрабатываем нажатия:
-     * - Кнопка "Назад" → возврат в меню
-     * - Строка "музыка" → переключение и сохранение
-     * - Строка "звуки" → переключение и сохранение
+     * Обрабатывает нажатия на кнопки настроек.
      */
     void handleInput() {
         if (Gdx.input.justTouched()) {
             touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             main.camera.unproject(touchPoint);
 
-            // Кнопка "Назад"
+            // Кнопка "НАЗАД"
             if (backBtnBounds.contains(touchPoint.x, touchPoint.y)) {
                 main.setScreen(main.menuScreen);
                 return;
@@ -208,7 +190,7 @@ public class SettingsScreen extends ScreenAdapter {
                 boolean newState = !MemoryManager.loadIsMusicOn();
                 MemoryManager.saveMusicSettings(newState);
                 musicSettingView.setText("музыка: " + translateStateToText(newState));
-                main.audioManager.updateMusicFlag();   // Применяем настройку
+                main.audioManager.updateMusicFlag();
                 return;
             }
 
@@ -217,12 +199,17 @@ public class SettingsScreen extends ScreenAdapter {
                 boolean newState = !MemoryManager.loadIsSoundOn();
                 MemoryManager.saveSoundSettings(newState);
                 soundSettingView.setText("звуки: " + translateStateToText(newState));
-                main.audioManager.updateSoundFlag();   // Применяем настройку
+                main.audioManager.updateSoundFlag();
                 return;
             }
         }
     }
 
+    /**
+     * Преобразует булево значение в текстовое представление.
+     * @param state true для ON, false для OFF
+     * @return строка "ON" или "OFF"
+     */
     private String translateStateToText(boolean state) {
         return state ? "ON" : "OFF";
     }

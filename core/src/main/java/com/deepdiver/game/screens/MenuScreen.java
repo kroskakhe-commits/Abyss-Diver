@@ -14,30 +14,33 @@ import com.deepdiver.game.GameSettings;
 import com.deepdiver.game.Main;
 
 /**
- * ГЛАВНОЕ МЕНЮ.
- *
- * Первое, что видит игрок. Отсюда можно начать игру, зайти в квесты,
- * обучение, магазин или настройки.
- *
- * Все кнопки расположены по центру экрана с возможностью тонкой настройки.
+ * Главное меню игры.
+ * Содержит кнопки для перехода на другие экраны:
+ * - Игра
+ * - Квесты
+ * - Обучение
+ * - Магазин
+ * - Рекорды
+ * - Настройки
  */
 public class MenuScreen implements Screen {
     final Main game;
     SpriteBatch batch;
     OrthographicCamera camera;
-    BitmapFont font;                     // Простой шрифт для заголовка
+    BitmapFont font;
 
-    Rectangle startBtnBounds;            // Кнопка PLAY (большая, по центру справа)
-    Rectangle questBtnBounds;            // Кнопка КВЕСТЫ
-    Rectangle tutBtnBounds;              // Кнопка ОБУЧЕНИЕ
-    Rectangle shopBtnBounds;             // Кнопка МАГАЗИН
-    Rectangle settingsBtnBounds;         // Шестерёнка (настройки)
-    Vector3 touchPoint;                  // Для обработки касаний
+    Rectangle startBtnBounds;
+    Rectangle questBtnBounds;
+    Rectangle tutBtnBounds;
+    Rectangle shopBtnBounds;
+    Rectangle recordsBtnBounds;
+    Rectangle settingsBtnBounds;
+    Vector3 touchPoint;
 
     public MenuScreen(final Main game) {
         this.game = game;
         batch = new SpriteBatch();
-        font = new BitmapFont();         // Стандартный шрифт LibGDX (для заголовка)
+        font = new BitmapFont();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, GameSettings.SCREEN_WIDTH, GameSettings.SCREEN_HEIGHT);
@@ -45,33 +48,25 @@ public class MenuScreen implements Screen {
         float centerX = GameSettings.DESIGN_WIDTH / 2;
         float centerY = GameSettings.DESIGN_HEIGHT / 2;
 
-        // ============================================================
-        // 🎯 НАСТРОЙКИ РАСПОЛОЖЕНИЯ КНОПОК — МЕНЯЙ ЗДЕСЬ!
-        // ============================================================
+        // Размеры кнопок
+        float startW = 280;
+        float startH = 280;
+        float smallW = 260;
+        float smallH = 120;
+        float iconSize = 60;
+        float recordsSize = 300;
 
-        // ----- РАЗМЕРЫ КНОПОК -----
-        float startW = 280;              // Ширина кнопки PLAY
-        float startH = 280;              // Высота кнопки PLAY
-        float smallW = 260;              // Ширина маленьких кнопок
-        float smallH = 120;              // Высота маленьких кнопок
-        float iconSize = 60;             // Размер шестерёнки
-
-        // ----- КНОПКА PLAY (большая, справа от центра) -----
-        float startOffsetX = 550;        // Смещение по X (положительное = правее)
-        float startOffsetY = -200;       // Смещение по Y (отрицательное = ниже)
-
+        // Кнопка PLAY (сдвинута вправо)
+        float startOffsetX = 550;
+        float startOffsetY = -200;
         float startX = centerX + startOffsetX;
         float startY = centerY + startOffsetY;
 
-        // ----- КНОПКИ КВЕСТЫ, ОБУЧЕНИЕ, МАГАЗИН (вертикальный стек слева) -----
-        float firstButtonY = centerY - 10;      // Y первой кнопки
-        float buttonSpacing = 130;               // Расстояние между кнопками
+        // Вертикальное расположение кнопок
+        float firstButtonY = centerY - 10;
+        float buttonSpacing = 130;
 
-        // ============================================================
-        // РАСЧЁТ КООРДИНАТ (НЕ ТРОГАТЬ, ЕСЛИ НЕ УВЕРЕН)
-        // ============================================================
-
-        // КНОПКА PLAY — центрируем по X и Y
+        // Кнопка PLAY
         startBtnBounds = new Rectangle(
             GameSettings.x(startX - startW / 2),
             GameSettings.y(startY - startH / 2),
@@ -79,7 +74,7 @@ public class MenuScreen implements Screen {
             GameSettings.size(startH)
         );
 
-        // КНОПКА КВЕСТЫ — по центру по X
+        // Кнопка КВЕСТЫ
         questBtnBounds = new Rectangle(
             GameSettings.x(centerX - smallW / 2),
             GameSettings.y(firstButtonY),
@@ -87,7 +82,7 @@ public class MenuScreen implements Screen {
             GameSettings.size(smallH)
         );
 
-        // КНОПКА ОБУЧЕНИЕ — ниже квестов
+        // Кнопка ОБУЧЕНИЕ
         tutBtnBounds = new Rectangle(
             GameSettings.x(centerX - smallW / 2),
             GameSettings.y(firstButtonY - buttonSpacing),
@@ -95,7 +90,7 @@ public class MenuScreen implements Screen {
             GameSettings.size(smallH)
         );
 
-        // КНОПКА МАГАЗИН — ещё ниже
+        // Кнопка МАГАЗИН
         shopBtnBounds = new Rectangle(
             GameSettings.x(centerX - smallW / 2),
             GameSettings.y(firstButtonY - buttonSpacing * 2),
@@ -103,7 +98,15 @@ public class MenuScreen implements Screen {
             GameSettings.size(smallH)
         );
 
-        // ШЕСТЕРЁНКА — правый верхний угол
+        // Кнопка РЕКОРДЫ
+        recordsBtnBounds = new Rectangle(
+            GameSettings.x(centerX - 570),
+            GameSettings.y(firstButtonY - 350),
+            GameSettings.size(recordsSize),
+            GameSettings.size(recordsSize)
+        );
+
+        // Кнопка НАСТРОЙКИ (шестерёнка)
         settingsBtnBounds = new Rectangle(
             GameSettings.x(GameSettings.DESIGN_WIDTH - 75),
             GameSettings.y(GameSettings.DESIGN_HEIGHT - 75),
@@ -116,7 +119,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // Чистим экран тёмно-синим цветом (на случай, если фон не загрузится)
+        // Очистка экрана
         Gdx.gl.glClearColor(0.07f, 0.09f, 0.17f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -125,23 +128,23 @@ public class MenuScreen implements Screen {
 
         batch.begin();
 
-        // ФОН
+        // Фон
         batch.draw(GameResources.backgroundMenu, 0, 0,
             GameSettings.SCREEN_WIDTH, GameSettings.SCREEN_HEIGHT);
 
-        // ЗАГОЛОВОК "ABYSS DIVER" — крупно, золотом
+        // Заголовок игры
         font.getData().setScale(GameSettings.size(2.2f));
         font.draw(batch, "ABYSS DIVER",
             GameSettings.x(GameSettings.DESIGN_WIDTH / 2f - 110),
             GameSettings.y(GameSettings.DESIGN_HEIGHT - 100));
 
-        // ПОДЗАГОЛОВОК — поменьше, бело-голубым
+        // Подзаголовок
         game.textView.setScale(GameSettings.size(1.2f));
         game.textView.draw(batch, "Глубинный ныряльщик",
             GameSettings.x(GameSettings.DESIGN_WIDTH / 2f - 200),
             GameSettings.y(GameSettings.DESIGN_HEIGHT - 150), Color.WHITE);
 
-        // РИСУЕМ КНОПКИ
+        // Отрисовка кнопок
         if (GameResources.buttonStartMarine != null) {
             batch.draw(GameResources.buttonStartMarine,
                 startBtnBounds.x, startBtnBounds.y,
@@ -162,8 +165,11 @@ public class MenuScreen implements Screen {
                 shopBtnBounds.x, shopBtnBounds.y,
                 shopBtnBounds.width, shopBtnBounds.height);
         }
-
-        // ШЕСТЕРЁНКА (настройки)
+        if (GameResources.buttonRecordsMarine != null) {
+            batch.draw(GameResources.buttonRecordsMarine,
+                recordsBtnBounds.x, recordsBtnBounds.y,
+                recordsBtnBounds.width, recordsBtnBounds.height);
+        }
         if (GameResources.settingsIcon != null) {
             batch.draw(GameResources.settingsIcon,
                 settingsBtnBounds.x, settingsBtnBounds.y,
@@ -175,33 +181,38 @@ public class MenuScreen implements Screen {
         handleInput();
     }
 
-    /**
-     * Обрабатываем нажатия на кнопки меню.
-     * Координаты кнопок уже адаптированы под любой экран.
-     */
     private void handleInput() {
         if (Gdx.input.justTouched()) {
             touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPoint);
 
+            // Начать игру
             if (startBtnBounds.contains(touchPoint.x, touchPoint.y)) {
-                // Создаём НОВЫЙ игровой экран (сбрасываем прогресс текущей сессии)
                 game.gameScreen = new GameScreen(game);
                 game.setScreen(game.gameScreen);
                 return;
             }
+            // Квесты
             if (questBtnBounds.contains(touchPoint.x, touchPoint.y)) {
                 game.setScreen(new MissionBoardScreen(game));
                 return;
             }
+            // Обучение
             if (tutBtnBounds.contains(touchPoint.x, touchPoint.y)) {
                 game.setScreen(game.tutorialScreen);
                 return;
             }
+            // Магазин
             if (shopBtnBounds.contains(touchPoint.x, touchPoint.y)) {
                 game.setScreen(new ShopScreen(game));
                 return;
             }
+            // Рекорды
+            if (recordsBtnBounds.contains(touchPoint.x, touchPoint.y)) {
+                game.setScreen(new RecordsScreen(game));
+                return;
+            }
+            // Настройки
             if (settingsBtnBounds.contains(touchPoint.x, touchPoint.y)) {
                 game.setScreen(game.settingsScreen);
                 return;
@@ -209,11 +220,15 @@ public class MenuScreen implements Screen {
         }
     }
 
-    // ========== СТАНДАРТНЫЕ МЕТОДЫ SCREEN ==========
     @Override public void show() {}
     @Override public void resize(int w, int h) {}
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
-    @Override public void dispose() { batch.dispose(); font.dispose(); }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+        font.dispose();
+    }
 }

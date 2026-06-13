@@ -4,31 +4,27 @@ import com.deepdiver.game.managers.MemoryManager;
 
 /**
  * Глобальная сессия игрока.
- * Хранит ОБЩИЙ счёт за всё время (не за одну игру).
- * Очки копятся, тратятся в магазине, сохраняются между запусками.
- *
- * Статический — потому что счёт один на всю игру, нет смысла создавать объект.
+ * Хранит общий счёт, накопленный за всё время игры.
+ * Счёт используется для покупки скинов и сохраняется между запусками.
  */
 public class GameSession {
     private static int totalScore = 0;
 
     /**
-     * Вызвать один раз при старте приложения.
-     * Загружает сохранённый счёт из памяти телефона.
+     * Инициализирует сессию, загружая сохранённый счёт.
+     * Должен быть вызван при старте приложения.
      */
     public static void init() {
         totalScore = MemoryManager.loadTotalScore();
-        System.out.println("💰 Общий счёт загружен: " + totalScore);
     }
 
     /**
-     * Добавить очки к общему счёту и сразу сохранить.
-     * @param points сколько добавить (100 за синий кристалл, 300 за золотой)
+     * Добавляет очки к общему счёту и сохраняет изменения.
+     * @param points количество добавляемых очков
      */
     public static void addScore(int points) {
         totalScore += points;
         MemoryManager.saveTotalScore(totalScore);
-        System.out.println("💰 Добавлено " + points + " очков. Всего: " + totalScore);
     }
 
     public static int getTotalScore() {

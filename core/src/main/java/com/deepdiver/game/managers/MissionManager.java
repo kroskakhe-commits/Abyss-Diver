@@ -5,10 +5,8 @@ import com.badlogic.gdx.Preferences;
 import com.deepdiver.game.GameSettings;
 
 /**
- * Управляет прогрессом квестов.
- * Запоминает, сколько заданий уже выполнено.
- *
- * Отдельный файл сохранений, чтобы не мешать с остальными настройками.
+ * Управление прогрессом выполнения заданий (квестов).
+ * Хранит количество выполненных заданий и предоставляет методы для их завершения и сброса.
  */
 public class MissionManager {
     private static final Preferences prefs = Gdx.app.getPreferences("DeepDiverMissions");
@@ -20,34 +18,29 @@ public class MissionManager {
 
     public static void loadProgress() {
         completedMissions = prefs.getInteger("completedMissions", 0);
-        System.out.println("📋 Загружен прогресс миссий: " + completedMissions + "/" + GameSettings.MISSIONS_COUNT);
     }
 
     public static void saveProgress() {
         prefs.putInteger("completedMissions", completedMissions);
         prefs.flush();
-        System.out.println("💾 Сохранён прогресс миссий: " + completedMissions + "/" + GameSettings.MISSIONS_COUNT);
     }
 
     /**
-     * Вызывается, когда игрок выполнил текущее задание.
+     * Завершает текущее задание и увеличивает счётчик выполненных.
      */
     public static void completeCurrentMission() {
         if (completedMissions < GameSettings.MISSIONS_COUNT) {
             completedMissions++;
             saveProgress();
-            System.out.println("🎉 Выполнена миссия! Всего выполнено: " + completedMissions);
         }
     }
 
     /**
-     * Сброс прогресса — всё начинается заново.
-     * Кнопка "СБРОС" на экране квестов.
+     * Сбрасывает прогресс заданий. Используется кнопкой сброса.
      */
     public static void resetProgress() {
         completedMissions = 0;
         saveProgress();
-        System.out.println("🔄 Прогресс миссий сброшен");
     }
 
     public static int getCompletedMissions() {

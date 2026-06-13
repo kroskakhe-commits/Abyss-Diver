@@ -7,21 +7,25 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.deepdiver.game.components.TextView;
 import com.deepdiver.game.managers.AudioManager;
-import com.deepdiver.game.screens.*;
+import com.deepdiver.game.screens.GameScreen;
+import com.deepdiver.game.screens.MenuScreen;
+import com.deepdiver.game.screens.MissionBoardScreen;
+import com.deepdiver.game.screens.SettingsScreen;
+import com.deepdiver.game.screens.TutorialScreen;
 
 /**
- * Главный класс — входная точка игры.
- * LibGDX требует Game или ApplicationListener.
- * Здесь хранятся все экраны и глобальные компоненты (batch, камера, аудио).
+ * Главный класс приложения.
+ * Точка входа в игру, наследуется от LibGDX Game.
+ * Содержит глобальные компоненты и управляет переключением между экранами.
  */
 public class Main extends Game {
     public SpriteBatch batch;
     public OrthographicCamera camera;
     public TextView textView;
     public AudioManager audioManager;
-    public Vector3 touch;                      // Для обработки касаний
+    public Vector3 touch;
 
-    // Все экраны живут здесь, чтобы не создавать каждый раз заново
+    // Экранные компоненты
     public GameScreen gameScreen;
     public MenuScreen menuScreen;
     public SettingsScreen settingsScreen;
@@ -30,28 +34,29 @@ public class Main extends Game {
 
     @Override
     public void create() {
-        // Узнаём реальные размеры экрана и настраиваем масштабирование
+        // Настройка размеров экрана и масштабирования
         float realWidth = Gdx.graphics.getWidth();
         float realHeight = Gdx.graphics.getHeight();
         GameSettings.updateScreenSize(realWidth, realHeight);
 
+        // Инициализация глобальных компонентов
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, realWidth, realHeight);
 
         textView = new TextView();
         audioManager = new AudioManager();
-        GameResources.load();      // Загружаем все текстуры
-        GameSession.init();        // Загружаем сохранённый счёт
+        GameResources.load();
+        GameSession.init();
 
-        // Создаём все экраны
+        // Создание экранов
         gameScreen = new GameScreen(this);
         menuScreen = new MenuScreen(this);
         settingsScreen = new SettingsScreen(this);
         tutorialScreen = new TutorialScreen(this);
         missionBoardScreen = new MissionBoardScreen(this);
 
-        // Стартуем с меню
+        // Старт с главного меню
         setScreen(menuScreen);
     }
 

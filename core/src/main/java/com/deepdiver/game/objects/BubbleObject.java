@@ -5,10 +5,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.deepdiver.game.GameSettings;
 
 /**
- * Пузырёк кислорода.
- * Появляется справа, летит влево. Даёт кислород при сборе.
- *
- * Летит БЫСТРЕЕ остальных (x1.5 скорости мира), чтобы создать ощущение срочности.
+ * Объект пузырька кислорода.
+ * Восстанавливает кислород при столкновении с дайвером.
  */
 public class BubbleObject {
     public float x, y;
@@ -16,20 +14,27 @@ public class BubbleObject {
     public float height = GameSettings.BUBBLE_SIZE;
     public Rectangle bounds;
 
+    /**
+     * Конструктор. Создаёт пузырёк в случайной позиции справа от экрана.
+     */
     public BubbleObject() {
-        // Появляемся за правым краем экрана
         this.x = GameSettings.SCREEN_WIDTH + 50;
-        // Случайная высота, но не слишком близко к краям
         this.y = MathUtils.random(50f, GameSettings.SCREEN_HEIGHT - 80f);
         this.bounds = new Rectangle(x, y, width, height);
     }
 
+    /**
+     * Обновляет позицию границ объекта.
+     * @param delta время между кадрами (не используется для движения, только для границ)
+     */
     public void update(float delta) {
-        // Скорость в 1.5 раза выше обычной
-        x -= (GameSettings.MOVE_SPEED * 1.5f) * delta;
         bounds.setPosition(x, y);
     }
 
+    /**
+     * Проверяет, вышел ли пузырёк за левый край экрана.
+     * @return true если объект полностью невидим
+     */
     public boolean isOutOfFrame() {
         return x + width < 0;
     }

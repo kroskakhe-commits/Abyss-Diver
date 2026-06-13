@@ -8,13 +8,13 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Disposable;
 
 /**
- * Универсальный текст с поддержкой кириллицы и масштабирования.
- * Загружает TTF-шрифт, сразу включает все нужные символы.
+ * Компонент для отображения текста с поддержкой кириллицы.
+ * Загружает шрифт из TTF-файла и позволяет масштабировать текст.
  */
 public class TextView implements Disposable {
     private BitmapFont font;
     private float scale = 1.0f;
-    public String text;   // не везде используется, но пусть будет
+    public String text;
     public float x, y;
 
     public TextView() {
@@ -22,8 +22,6 @@ public class TextView implements Disposable {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 36;
-
-        // БЕЗ ЭТОГО РУССКИЙ НЕ РАБОТАЕТ
         parameter.characters = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789][_!$%#@|/?-+=()*&.;:,{}\"'`<>«» ";
 
         font = generator.generateFont(parameter);
